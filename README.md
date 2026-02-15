@@ -6,6 +6,7 @@ Usa [faster-whisper](https://github.com/SYSTRAN/faster-whisper) para transcriç�
 
 ## Funcionalidades
 
+- **Transcrição em tempo real** a partir do microfone ou dispositivo de áudio do sistema
 - Transcrição de arquivos de áudio e vídeo (qualquer formato suportado pelo ffmpeg)
 - Detecção automática de idioma (inglês e português)
 - Saída em múltiplos formatos: texto plano, SRT (legendas) e JSON
@@ -18,8 +19,10 @@ Usa [faster-whisper](https://github.com/SYSTRAN/faster-whisper) para transcriç�
 - Python >= 3.11
 - [uv](https://docs.astral.sh/uv/) (gerenciador de pacotes)
 - [ffmpeg](https://ffmpeg.org/) instalado no sistema
+- Dispositivo de áudio de entrada (microfone) para transcrição em tempo real
 - (Opcional) [Ollama](https://ollama.com/) para sumarização
 - (Opcional) GPU NVIDIA com CUDA para transcrição acelerada
+- (Opcional) Dispositivo de áudio virtual para captura de áudio do sistema
 
 ## Instalação
 
@@ -41,7 +44,62 @@ ffmpeg -version
 
 ## Uso
 
-### Transcrição básica
+### Transcrição em tempo real
+
+O modo principal do LLocal Transcriptor é a transcrição ao vivo, ideal para reuniões, aulas e entrevistas:
+
+```bash
+# Iniciar transcrição em tempo real com o microfone padrão
+uv run transcriptor live
+
+# Especificar idioma para melhor precisão
+uv run transcriptor live --language pt
+
+# Usar modelo maior para melhor qualidade
+uv run transcriptor live --model medium --language pt
+
+# Salvar a transcrição ao finalizar
+uv run transcriptor live --output reuniao.txt
+
+# Salvar em formato SRT com timestamps
+uv run transcriptor live --format srt --output reuniao.srt
+```
+
+Pressione **Ctrl+C** para parar a gravação. A transcrição aparece no terminal em tempo real, com timestamps para cada segmento.
+
+#### Capturando áudio do sistema (reuniões online)
+
+Para transcrever reuniões do Google Meet, Zoom, Teams etc., você precisa capturar o áudio do sistema usando um dispositivo de áudio virtual:
+
+- **Linux:** Use PulseAudio/PipeWire monitor (`pactl list sources`)
+- **macOS:** Instale [BlackHole](https://existential.audio/blackhole/) ou [Soundflower](https://github.com/mattingalls/Soundflower)
+- **Windows:** Use [VB-CABLE](https://vb-audio.com/Cable/)
+
+Depois de configurar, liste os dispositivos disponíveis e use o ID do dispositivo virtual:
+
+```bash
+# Listar dispositivos de áudio
+uv run transcriptor live --list-devices
+
+# Usar um dispositivo específico (ex.: monitor do PulseAudio)
+uv run transcriptor live --device 5 --language pt
+```
+
+#### Ajustando o intervalo de transcrição
+
+O intervalo entre transcrições pode ser ajustado (padrão: 3 segundos). Intervalos menores dão resultados mais rápidos, mas intervalos maiores produzem transcrições mais precisas:
+
+```bash
+# Transcrição mais frequente (a cada 2 segundos)
+uv run transcriptor live --interval 2
+
+# Transcrição mais precisa (a cada 5 segundos)
+uv run transcriptor live --interval 5
+```
+
+### Transcrição de arquivos
+
+#### Transcrição básica
 
 ```bash
 uv run transcriptor transcribe audio.mp3

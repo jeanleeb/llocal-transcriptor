@@ -12,6 +12,8 @@ dependencies = [
     "typer>=0.15.0",
     "httpx>=0.28.0",
     "rich>=13.0.0",
+    "sounddevice>=0.5.0",
+    "numpy>=1.24.0",
 ]
 
 [project.scripts]
@@ -28,6 +30,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/transcriptor/cli.py" = ["B008"]
 
 [dependency-groups]
 dev = [

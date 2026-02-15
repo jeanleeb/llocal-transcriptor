@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
 
 from transcriptor.transcriber import (
@@ -182,4 +183,82 @@ class TestTranscriber:
 
         mock_model.transcribe.assert_called_once_with(
             str(audio_file), language=None, beam_size=5, vad_filter=True
+        )
+
+
+class TestTranscribeAudio:
+    @patch("transcriptor.transcriber.WhisperModel")
+    def test_empty_array_returns_empty_result(self, mock_whisper_model):
+        t = Transcriber(model_name="base", device="cpu")
+        result = t.transcribe_audio(np.array([], dtype=np.float32))
+
+        assert result.segments == []
+        assert result.text == ""
+        assert result.language == ""
+        assert result.language_probability == 0.0
+
+    @patch("transcriptor.transcriber.WhisperModel")
+    def test_transcribe_audio_success(self, mock_whisper_model):
+        mock_seg1 = MagicMock()
+        mock_seg1.start = 0.0
+        mock_seg1.end = 1.5
+        mock_seg1.text = " Olá "
+
+        mock_seg2 = MagicMock()
+        mock_seg2.start = 1.5
+        mock_seg2.end = 3.0
+        mock_seg2.text = " Mundo "
+
+        mock_info = MagicMock()
+        mock_info.language = "pt"
+        mock_info.language_probability = 0.97
+
+        mock_model = MagicMock()
+        mock_model.transcribe.return_value = (iter([mock_seg1, mock_seg2]), mock_info)
+        mock_whisper_model.return_value = mock_model
+
+        t = Transcriber(model_name="base", device="cpu")
+        audio = np.zeros(16000 * 3, dtype=np.float32)  # 3 seconds
+        result = t.transcribe_audio(audio)
+
+        assert result.language == "pt"
+        assert result.language_probability == 0.97
+        assert result.text == "Olá Mundo"
+        assert len(result.segments) == 2
+        assert result.segments[0].text == " Olá "
+
+    @patch("transcriptor.transcriber.WhisperModel")
+    def test_transcribe_audio_passes_language(self, mock_whisper_model):
+        mock_info = MagicMock()
+        mock_info.language = "en"
+        mock_info.language_probability = 0.95
+
+        mock_model = MagicMock()
+        mock_model.transcribe.return_value = (iter([]), mock_info)
+        mock_whisper_model.return_value = mock_model
+
+        t = Transcriber(model_name="base", device="cpu")
+        audio = np.zeros(16000, dtype=np.float32)
+        t.transcribe_audio(audio, language="en")
+
+        mock_model.transcribe.assert_called_once_with(
+            audio, language="en", beam_size=5, vad_filter=True
+        )
+
+    @patch("transcriptor.transcriber.WhisperModel")
+    def test_transcribe_audio_auto_language(self, mock_whisper_model):
+        mock_info = MagicMock()
+        mock_info.language = "en"
+        mock_info.language_probability = 0.90
+
+        mock_model = MagicMock()
+        mock_model.transcribe.return_value = (iter([]), mock_info)
+        mock_whisper_model.return_value = mock_model
+
+        t = Transcriber(model_name="base", device="cpu")
+        audio = np.zeros(16000, dtype=np.float32)
+        t.transcribe_audio(audio, language="auto")
+
+        mock_model.transcribe.assert_called_once_with(
+            audio, language=None, beam_size=5, vad_filter=True
         )
