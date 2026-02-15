@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Arte ASCII da Lasanha - a mascote do LLocal Transcriptor."""
+"""Arte ASCII da Lasanga - a mascote do LLocal Transcriptor."""
 
-LASANHA = r"""
+LASANGA = r"""
             *  LLocal Transcriptor  *
      ______________________________________________
     |                                              |
@@ -16,14 +16,14 @@ LASANHA = r"""
     |    | |        | |                             |
     |   _|_|________|_|_                            |
     |  | ============== |                           |
-    |  |  L A S A N H A |                           |
+    |  |  L A S A N G A |                           |
     |  |________________|                           |
     |______________________________________________|
 """
 
-LASANHA_DEITADA = r"""
+LASANGA_DEITADA = r"""
 
-                   ~~ Lasanha na prateleira ~~
+                   ~~ Lasanga na prateleira ~~
 
       .----------------------------------------------------.
       |  .__          .__          .__          .__         |
@@ -35,7 +35,7 @@ LASANHA_DEITADA = r"""
    /                 /\          /\                       / .|
   |     ____________/  \___  __/  \_________            |  /
   |    /  .    .         .\\/..           . \           | /
-  |   /  . .. .  LASANHA  ..  . deitadona . .\          |/
+  |   /  . .. .  LASANGA  ..  . deitadona . .\          |/
   |  /______.___olhando pra vc_._com olhao._.\         |
   | |  _     _          _     _          _     |        |
   | | | |   | |  /\_/\ | |   | | /\_/\  | |   |        |
@@ -47,9 +47,9 @@ LASANHA_DEITADA = r"""
     Pronta pra transcrever seus audios!         =^.^=
 """
 
-LASANHA_CLOSE = r"""
+LASANGA_CLOSE = r"""
 
-              Lasanha te olhando fixamente
+              Lasanga te olhando fixamente
              enquanto transcreve seu audio
 
                       /\_____/\
@@ -72,15 +72,15 @@ LASANHA_CLOSE = r"""
 
 """
 
-LASANHA_MINI = r"""
+LASANGA_MINI = r"""
      /\_/\
-    ( O.O )  ~ Lasanha diz: miau!
+    ( O.O )  ~ Lasanga diz: miau!
      > w <   Transcrevendo localmente...
     /|   |\
    (_|   |_)  =^.^=
 """
 
-LASANHA_PRATELEIRA = r"""
+LASANGA_PRATELEIRA = r"""
     ____________________________________________________
    |     |     |     |     |     |     |     |     |    |
    |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |   |
@@ -99,21 +99,21 @@ LASANHA_PRATELEIRA = r"""
    |  *  |  *  |  *  |  *  |  *  |  *  |  *  |  *  |   |
    |_____|_____|_____|_____|_____|_____|_____|_____|____|
 
-          Lasanha relaxando na caminha
+          Lasanga relaxando na caminha
          com estampa de patinhas  ~.~
 """
 
 
-def mostrar_lasanha(estilo: str = "completa") -> None:
-    """Mostra a arte ASCII da Lasanha no terminal."""
+def mostrar_lasanga(estilo: str = "completa") -> None:
+    """Mostra a arte ASCII da Lasanga no terminal."""
     artes = {
-        "completa": LASANHA,
-        "mini": LASANHA_MINI,
-        "deitada": LASANHA_DEITADA,
-        "close": LASANHA_CLOSE,
-        "prateleira": LASANHA_PRATELEIRA,
+        "completa": LASANGA,
+        "mini": LASANGA_MINI,
+        "deitada": LASANGA_DEITADA,
+        "close": LASANGA_CLOSE,
+        "prateleira": LASANGA_PRATELEIRA,
     }
-    print(artes.get(estilo, LASANHA))
+    print(artes.get(estilo, LASANGA))
 
 
 if __name__ == "__main__":
@@ -125,16 +125,16 @@ if __name__ == "__main__":
             print(f"\n{'='*56}")
             print(f"  Estilo: {nome}")
             print(f"{'='*56}")
-            mostrar_lasanha(nome)
+            mostrar_lasanga(nome)
     elif estilo == "--help":
-        print("Uso: python lasanha.py [completa|mini|deitada|close|prateleira|--all]")
+        print("Uso: python lasanga.py [completa|mini|deitada|close|prateleira|--all]")
         print()
         print("Estilos disponíveis:")
-        print("  completa    - Arte principal da Lasanha (padrão)")
+        print("  completa    - Arte principal da Lasanga (padrão)")
         print("  mini        - Versão compacta")
-        print("  deitada     - Lasanha deitada na prateleira")
-        print("  close       - Close nos olhos azuis da Lasanha")
-        print("  prateleira  - Lasanha relaxando na caminha")
+        print("  deitada     - Lasanga deitada na prateleira")
+        print("  close       - Close nos olhos azuis da Lasanga")
+        print("  prateleira  - Lasanga relaxando na caminha")
         print("  --all       - Mostra todas as artes")
     else:
-        mostrar_lasanha(estilo)
+        mostrar_lasanga(estilo)
