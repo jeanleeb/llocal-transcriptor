@@ -1,0 +1,39 @@
+[project]
+name = "transcriptor"
+version = "0.1.0"
+description = "Local audio transcription and summarization tool"
+readme = "README.md"
+authors = [
+    { name = "Jean", email = "jeanlee.dv@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "faster-whisper>=1.1.0",
+    "typer>=0.15.0",
+    "httpx>=0.28.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+transcriptor = "transcriptor.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 100
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
+
+[tool.ty.src]
+include = ["src"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "ruff>=0.15.1",
+    "ty>=0.0.17",
+]
