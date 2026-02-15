@@ -123,7 +123,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         fullTranscript += (fullTranscript ? " " : "") + message.text.trim();
       }
     }
-    // Forward to popup
+    // Forward to popup (may fail if popup is closed — that's OK)
     chrome.runtime.sendMessage({
       type: message.type,
       text: message.text,
@@ -131,7 +131,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       message: message.message,
       segments: message.segments,
       is_partial: message.is_partial,
-    });
+    }).catch(() => {});
     return false;
   }
 

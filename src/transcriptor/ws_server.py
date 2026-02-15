@@ -22,7 +22,6 @@ DEFAULT_PORT = 9867
 SAMPLE_RATE = 16000
 # Transcribe every N seconds of accumulated audio
 CHUNK_DURATION_S = 3.0
-CHUNK_SAMPLES = int(SAMPLE_RATE * CHUNK_DURATION_S)
 
 
 class TranscriptionSession:
@@ -33,6 +32,7 @@ class TranscriptionSession:
         self.transcriber: Transcriber | None = None
         self.audio_buffer: list[np.ndarray] = []
         self.full_text_parts: list[str] = []
+        self.language: str = "auto"
         self.running = False
         self._process_task: asyncio.Task[None] | None = None
 
@@ -99,6 +99,30 @@ class TranscriptionSession:
             if self.audio_buffer:
                 await self._transcribe_buffer()
 
+    def _run_transcription(
+        self, audio: np.ndarray, language: str | None
+    ) -> tuple[list[dict[str, Any]], str]:
+        """Run transcription synchronously (called via asyncio.to_thread)."""
+        assert self.transcriber is not None
+        segments_iter, _info = self.transcriber.model.transcribe(
+            audio,
+            language=language,
+            beam_size=5,
+            vad_filter=True,
+        )
+
+        segments_data: list[dict[str, Any]] = []
+        text_parts: list[str] = []
+        for seg in segments_iter:
+            segments_data.append({
+                "start": seg.start,
+                "end": seg.end,
+                "text": seg.text.strip(),
+            })
+            text_parts.append(seg.text.strip())
+
+        return segments_data, " ".join(text_parts)
+
     async def _transcribe_buffer(self) -> None:
         if not self.audio_buffer or self.transcriber is None:
             return
@@ -113,24 +137,10 @@ class TranscriptionSession:
 
         try:
             lang_arg = self.language if self.language != "auto" else None
-            segments_iter, info = self.transcriber.model.transcribe(
-                audio,
-                language=lang_arg,
-                beam_size=5,
-                vad_filter=True,
+            segments_data, chunk_text = await asyncio.to_thread(
+                self._run_transcription, audio, lang_arg
             )
 
-            segments_data = []
-            text_parts = []
-            for seg in segments_iter:
-                segments_data.append({
-                    "start": seg.start,
-                    "end": seg.end,
-                    "text": seg.text.strip(),
-                })
-                text_parts.append(seg.text.strip())
-
-            chunk_text = " ".join(text_parts)
             if chunk_text:
                 self.full_text_parts.append(chunk_text)
 

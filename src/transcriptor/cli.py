@@ -78,7 +78,7 @@ def transcribe(
 @app.command()
 def serve(
     host: Annotated[
-        str, typer.Option("--host", "-h", help="Host to bind the WebSocket server.")
+        str, typer.Option("--host", help="Host to bind the WebSocket server.")
     ] = "localhost",
     port: Annotated[
         int, typer.Option("--port", "-p", help="Port for the WebSocket server.")
