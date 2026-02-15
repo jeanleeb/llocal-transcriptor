@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from transcriptor.config import Config, CONFIG_DIR, DEFAULT_CONFIG
+from transcriptor.config import CONFIG_DIR, DEFAULT_CONFIG, Config
 
 
 class TestConfigDefaults:
@@ -23,7 +23,7 @@ class TestConfigDefaults:
             assert getattr(cfg, key) == value
 
     def test_config_dir_path(self):
-        assert CONFIG_DIR == Path.home() / ".config" / "llocal-transcriptor"
+        assert Path.home() / ".config" / "llocal-transcriptor" == CONFIG_DIR
 
 
 class TestConfigLoad:
@@ -36,9 +36,7 @@ class TestConfigLoad:
     def test_load_reads_toml_file(self, tmp_path, monkeypatch):
         config_file = tmp_path / "config.toml"
         config_file.write_text(
-            'whisper_model = "large-v3"\n'
-            'language = "pt"\n'
-            'ollama_model = "gemma2"\n'
+            'whisper_model = "large-v3"\nlanguage = "pt"\nollama_model = "gemma2"\n'
         )
         monkeypatch.setattr("transcriptor.config.CONFIG_FILE", config_file)
         cfg = Config.load()

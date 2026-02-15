@@ -4,4 +4,16 @@
       "language_servers": ["ty", "ruff", "!basedpyright", "!pyright"],
     },
   },
+  "lsp": {
+    "ty": {
+      "settings": {
+        "diagnosticMode": "workspace",
+        "configuration": {
+          "environment": {
+            "python": ".venv"
+          }
+        }
+      },
+    },
+  },
 }

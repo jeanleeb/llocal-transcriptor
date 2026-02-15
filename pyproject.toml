@@ -23,13 +23,11 @@ build-backend = "uv_build"
 
 [tool.ruff]
 line-length = 100
-src = ["src"]
+src = ["src", "tests"]
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "SIM"]
-
-[tool.ty.src]
-include = ["src"]
 
 [dependency-groups]
 dev = [
