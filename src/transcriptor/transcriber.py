@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 from faster_whisper import WhisperModel
 
 from transcriptor.config import WHISPER_MODELS
@@ -104,6 +105,42 @@ class Transcriber:
 
         segments_iter, info = self.model.transcribe(
             str(audio_path),
+            language=lang_arg,
+            beam_size=5,
+            vad_filter=True,
+        )
+
+        segments: list[Segment] = []
+        full_text_parts: list[str] = []
+        for seg in segments_iter:
+            segments.append(Segment(start=seg.start, end=seg.end, text=seg.text))
+            full_text_parts.append(seg.text.strip())
+
+        return TranscriptionResult(
+            segments=segments,
+            language=info.language,
+            language_probability=info.language_probability,
+            text=" ".join(full_text_parts),
+        )
+
+    def transcribe_audio(
+        self,
+        audio: np.ndarray,
+        language: str | None = None,
+    ) -> TranscriptionResult:
+        """Transcribe audio from a numpy array.
+
+        Args:
+            audio: Audio data as float32 numpy array (16 kHz mono).
+            language: Language code ('en', 'pt') or None for auto-detection.
+        """
+        if audio.size == 0:
+            return TranscriptionResult(segments=[], language="", language_probability=0.0, text="")
+
+        lang_arg = language if language and language != "auto" else None
+
+        segments_iter, info = self.model.transcribe(
+            audio,
             language=lang_arg,
             beam_size=5,
             vad_filter=True,
